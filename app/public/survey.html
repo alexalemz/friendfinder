@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Friend Finder | Survey</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- <link rel="stylesheet" type="text/css" media="screen" href="main.css" /> -->
+    <!-- <script src="main.js"></script> -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <script
+        src="https://code.jquery.com/jquery-3.3.1.min.js"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    
+</head>
+<body>
+<div class="container">
+    <h2>Survey Questions</h2>
+    <hr>
+    <h3><b>About You</b></h3>
+    <h4>Name (Required)</h4>
+    <input type="text" id="user-name">
+    <h4>Link to Photo Image (Required)</h4>
+    <input type="text" id="user-photo-url">
+    <hr>
+    <div id="questions">
+        <h3><strong>Question 1</strong></h3>
+        <h4>Your mind is always buzzing with unexplored ideas and plans.</h4>
+        <select id="q1">
+            <option value="">Select an option</option>
+            <option value="1">1 (Strongly Disagree)</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5 (Strongly Agree)</option>
+        </select>
+    </div>
+    <button type="submit" id="submitBtn" class="btn btn-primary">Submit</button>
+
+
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Your Most Compatible Friend</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+            <div class="modal-body">
+                <h2><span id="mostCompatibleFriendName"></span></h3>
+                <img id="mostCompatibleFriendImg" src="">
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
+            </div>
+        </div>
+        </div>
+    </div>
+
+
+</div>
+
+<footer class="footer">
+    <div class="container">
+        <p><a href="/api/friends">API Friends Link</a> | <a href="/">Homepage</a> | <a href="#">GitHub Repo</a></p>
+    </div>
+</footer>
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+<script>
+    // Each question div should have this format:
+    // <h3><strong>Question 1</strong></h3>
+    // <h4>Your mind is always buzzing with unexplored ideas and plans.</h4>
+    // <select id="q1">
+    //     <option value="">Select an option</option>
+    //     <option value="1">1 (Strongly Disagree)</option>
+    //     <option value="2">2</option>
+    //     <option value="3">3</option>
+    //     <option value="4">4</option>
+    //     <option value="5">5 (Strongly Agree)</option>
+    // </select>
+    var questions = [
+        "Your mind is always buzzing with unexplored ideas and plans.",
+        "Generally speaking, you rely more on your experience than your imagination.",
+        "You find it easy to stay relaxed and focused even when there is some pressure.",
+        "You rarely do something just out of sheer curiosity.",
+        "People can rarely upset you.",
+        "It is often difficult for you to relate to other people’s feelings.",
+        "In a discussion, truth should be more important than people’s sensitivities.",
+        "You rarely get carried away by fantasies and ideas.",
+        "You think that everyone’s views should be respected regardless of whether they are supported by facts or not.",
+        "You feel more energetic after spending time with a group of people."
+    ];
+
+    function questionDiv(n, question) {
+        // Create the div
+        var div = $("<div>");
+        div.append($("<h3>").html("<b>Question " + n + "</b>"));
+        div.append( $("<h4>").html(question) );
+        var select = $("<select>").attr("id", "q" + n);
+        select.append("".concat(
+            '<option value="">Select an option</option>',
+            '<option value="1">1 (Strongly Disagree)</option>',
+            '<option value="2">2</option>',
+            '<option value="3">3</option>',
+            '<option value="4">4</option>',
+            '<option value="5">5 (Strongly Agree)</option>')
+        )
+        div.append(select);
+    
+        return div;
+    }
+
+    $(document).ready(() => {
+        $("#questions").empty();
+        // console.log(questions);
+        for (let i = 0; i < questions.length; i++) {
+            $("#questions").append(questionDiv(i+1, questions[i]));
+        }
+    })
+
+    // When the submit button is clicked.
+    $("#submitBtn").on("click", function(event) {
+        event.preventDefault();
+
+        // Do some sort of validation to make sure everything is filled out, before submitting.
+        // TO-DO
+
+        // Take all the values from each input and create put in in an object.
+        var userInfo = {
+            name: $("#user-name").val(),
+            photo: $("#user-photo-url").val(),
+            scores: []
+        };
+        // Loop through each question and append the value to scores[].
+        for (let i = 0; i < questions.length; i++) {
+            let score = parseInt( $("#q" + (i+1)).val() );
+            userInfo.scores.push(score);
+        }
+
+        console.log(userInfo);
+        
+
+        // Post that object to "/api/friends"
+        $.post("/api/friends", userInfo, function(data) {
+            let mostCompatibleFriend = data;
+            console.log(data);
+            // alert("Your new best friend is " + mostCompatibleFriend.name);
+
+            // Fill the modal with the mostCompatibleFriend's info.
+            $("#mostCompatibleFriendName").html(mostCompatibleFriend.name);
+            $("#mostCompatibleFriendImg").attr("src", mostCompatibleFriend.photo);
+
+            $("#exampleModal").modal("toggle");
+        });
+    });
+
+
+</script>
+</body>
+</html>
